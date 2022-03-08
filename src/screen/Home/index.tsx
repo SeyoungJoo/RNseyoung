@@ -3,12 +3,13 @@ import {useDispatch, useSelector} from 'react-redux';
 import {
   FlatList,
   SafeAreaView,
-  StatusBar,
   StyleSheet,
+  Button,
   Text,
   View,
+  Pressable,
 } from 'react-native';
-import Header from '../../components/Header';
+import {Header} from '../../components/Header';
 import {getLaunches} from '../../modules/launches/actions';
 import {launchesSelector} from '../../modules/launches/selectors';
 import {Launch} from '../../models/launch';
@@ -42,8 +43,10 @@ export const Home = () => {
             <Text style={styles.title}>
               {truncateString(item.mission_name)}
             </Text>
-            <View>
-              <Text>{chageeTimeFormat(item.launch_date_utc)}</Text>
+            <View style={styles.dateContainer}>
+              <Text style={styles.date}>
+                {chageeTimeFormat(item.launch_date_utc)}
+              </Text>
               <Text>{item.rocket.rocket_name}</Text>
             </View>
           </View>
@@ -55,6 +58,17 @@ export const Home = () => {
   return (
     <SafeAreaView>
       <Header />
+      <View style={styles.buttonContainer}>
+        <Pressable style={styles.button}>
+          <Text style={styles.buttonText}>filter by Year</Text>
+        </Pressable>
+        <Pressable
+          style={styles.button}
+          // onPress={onPress}
+        >
+          <Text style={styles.buttonText}>Sorting Decending</Text>
+        </Pressable>
+      </View>
       <View>
         <FlatList
           data={launches}
@@ -72,15 +86,29 @@ export const Home = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginTop: StatusBar.currentHeight || 0,
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    marginRight: 20,
+    marginBottom: 10,
+  },
+  button: {
+    backgroundColor: '#02055a',
+    alignSelf: 'flex-start',
+    padding: 8,
+    marginLeft: 10,
+  },
+  buttonText: {
+    color: '#ffffff',
+    fontSize: 12,
   },
   item: {
     borderColor: 'black',
     borderWidth: 1,
     borderRadius: 8,
-    padding: 20,
+    padding: 10,
+    paddingLeft: 20,
+    paddingRight: 20,
     marginVertical: 8,
     marginHorizontal: 16,
   },
@@ -91,5 +119,13 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
+  },
+  date: {
+    fontSize: 13,
+    color: 'grey',
+    marginBottom: 6,
+  },
+  dateContainer: {
+    alignItems: 'flex-end',
   },
 });
