@@ -18,48 +18,74 @@ export const Home = () => {
   const dispatch = useDispatch();
   const launches = useSelector(launchesSelector);
 
+  //dispatch async thunk with Redux toolkit
+  //seperate UI with Logic
+
   useEffect(() => {
     dispatch(getLaunches());
   }, []);
 
-  //dispatch async thunk with Redux toolkit
-  //seperate UI with Logic
+  const chageeTimeFormat = (utc_time: string) => {
+    let date = new Date(utc_time);
+    return date.toLocaleDateString();
+  };
 
-  // const renderItem = () => {
-  //   return <></>;
-  // };
+  const shortenCharacter = (string: string) => {
+    return string.substring(0, 8);
+  };
+
+  const renderItem = data => {
+    return (
+      <>
+        <View style={styles.item}>
+          <View style={styles.box}>
+            {/* <Text>#</Text> */}
+            <Text style={styles.title}>
+              {shortenCharacter(data.item.mission_name)}
+            </Text>
+            <View>
+              <Text>{chageeTimeFormat(data.item.launch_date_utc)}</Text>
+              <Text>{data.item.rocket.rocket_name}</Text>
+            </View>
+          </View>
+        </View>
+      </>
+    );
+  };
+
   return (
     <SafeAreaView>
-      <ScrollView contentInsetAdjustmentBehavior="automatic">
-        <Header />
-        <View>
-          <Text>🚀spaceX project🚀</Text>
-          {/* <FlatList
-            data={launches}
-            renderItem={renderItem}
-            keyExtractor={item => item.flight_number}
-          /> */}
-        </View>
-      </ScrollView>
+      <Header />
+      <View>
+        <FlatList
+          data={launches}
+          renderItem={renderItem}
+          keyExtractor={item => item.flight_number.toString()}
+        />
+      </View>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  container: {
+    flex: 1,
+    marginTop: StatusBar.currentHeight || 0,
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
+  item: {
+    borderColor: 'black',
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 20,
+    marginVertical: 8,
+    marginHorizontal: 16,
   },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
+  box: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
-  highlight: {
-    fontWeight: '700',
+  title: {
+    fontSize: 20,
   },
 });
