@@ -8,3 +8,8 @@ export const launchesSelector = createSelector(
   launchesState,
   launches => launches,
 );
+
+// export const sortBy = createSelector(
+//     launchesState,
+//     launches => launches.sort,
+//   );

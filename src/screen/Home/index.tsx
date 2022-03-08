@@ -1,23 +1,29 @@
-import React, {useState, useEffect} from 'react';
-import {Provider, useDispatch, useSelector} from 'react-redux';
+import React, {useEffect, useCallback} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
 import {
   FlatList,
   SafeAreaView,
-  ScrollView,
-  StatusBar,
   StyleSheet,
+  Button,
   Text,
-  useColorScheme,
   View,
+  Pressable,
 } from 'react-native';
-import Header from '../../components/Header';
+import {Header} from '../../components/Header';
 import {getLaunches} from '../../modules/launches/actions';
 import {launchesSelector} from '../../modules/launches/selectors';
+import {Launch} from '../../models/launch';
+import {isPendingSelector} from '../../modules/status/selectors';
+import {RootState} from '../../redux/configureStore';
+import {chageeTimeFormat} from '../../utils/changeTimeFormat';
+import {truncateString} from '../../utils/truncateString';
 
 export const Home = () => {
   const dispatch = useDispatch();
   const launches = useSelector(launchesSelector);
-
+  const isLaunchesPeding = useSelector((state: RootState) =>
+    isPendingSelector(state, getLaunches.typePrefix),
+  );
   //dispatch async thunk with Redux toolkit
   //seperate UI with Logic
 
@@ -25,27 +31,23 @@ export const Home = () => {
     dispatch(getLaunches());
   }, []);
 
-  const chageeTimeFormat = (utc_time: string) => {
-    let date = new Date(utc_time);
-    return date.toLocaleDateString();
-  };
+  const handleReload = useCallback(() => {
+    dispatch(getLaunches());
+  }, [dispatch]);
 
-  const shortenCharacter = (string: string) => {
-    return string.substring(0, 8);
-  };
-
-  const renderItem = data => {
+  const renderItem = ({item}: {item: Launch}) => {
     return (
       <>
         <View style={styles.item}>
           <View style={styles.box}>
-            {/* <Text>#</Text> */}
             <Text style={styles.title}>
-              {shortenCharacter(data.item.mission_name)}
+              {truncateString(item.mission_name)}
             </Text>
-            <View>
-              <Text>{chageeTimeFormat(data.item.launch_date_utc)}</Text>
-              <Text>{data.item.rocket.rocket_name}</Text>
+            <View style={styles.dateContainer}>
+              <Text style={styles.date}>
+                {chageeTimeFormat(item.launch_date_utc)}
+              </Text>
+              <Text>{item.rocket.rocket_name}</Text>
             </View>
           </View>
         </View>
@@ -56,11 +58,27 @@ export const Home = () => {
   return (
     <SafeAreaView>
       <Header />
+      <View style={styles.buttonContainer}>
+        <Pressable style={styles.button}>
+          <Text style={styles.buttonText}>filter by Year</Text>
+        </Pressable>
+        <Pressable
+          style={styles.button}
+          // onPress={onPress}
+        >
+          <Text style={styles.buttonText}>Sorting Decending</Text>
+        </Pressable>
+      </View>
       <View>
         <FlatList
           data={launches}
           renderItem={renderItem}
-          keyExtractor={item => item.flight_number.toString()}
+          contentContainerStyle={StyleSheet.flatten({paddingBottom: 90})}
+          keyExtractor={item =>
+            `${item.flight_number.toString()}-${item.launch_date_utc}`
+          }
+          refreshing={isLaunchesPeding}
+          onRefresh={handleReload}
         />
       </View>
     </SafeAreaView>
@@ -68,15 +86,29 @@ export const Home = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginTop: StatusBar.currentHeight || 0,
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    marginRight: 20,
+    marginBottom: 10,
+  },
+  button: {
+    backgroundColor: '#02055a',
+    alignSelf: 'flex-start',
+    padding: 8,
+    marginLeft: 10,
+  },
+  buttonText: {
+    color: '#ffffff',
+    fontSize: 12,
   },
   item: {
     borderColor: 'black',
     borderWidth: 1,
     borderRadius: 8,
-    padding: 20,
+    padding: 10,
+    paddingLeft: 20,
+    paddingRight: 20,
     marginVertical: 8,
     marginHorizontal: 16,
   },
@@ -87,5 +119,13 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
+  },
+  date: {
+    fontSize: 13,
+    color: 'grey',
+    marginBottom: 6,
+  },
+  dateContainer: {
+    alignItems: 'flex-end',
   },
 });

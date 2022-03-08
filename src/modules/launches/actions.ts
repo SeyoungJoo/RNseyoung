@@ -4,7 +4,7 @@ import {Launch} from '../../models/launch';
 import {RootState} from '../../redux/configureStore';
 
 export const getLaunches = createAsyncThunk<Launch[], void, {state: RootState}>(
-  'workXP/getWorkXP',
+  '_',
 
   //redux toolkit
   async (_, {rejectWithValue}) => {

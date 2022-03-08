@@ -1,13 +1,22 @@
 import React from 'react';
 
-import {View, Text} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 
-const Header = () => {
+export const Header = () => {
   return (
-    <View>
-      <Text>🚀spaceX project🚀</Text>
+    <View style={styles.header}>
+      <Text style={styles.headerText}>🚀spaceX project🚀</Text>
     </View>
   );
 };
 
-export default Header;
+const styles = StyleSheet.create({
+  header: {
+    alignItems: 'center',
+  },
+  headerText: {
+    fontWeight: 'bold',
+    fontSize: 20,
+    marginBottom: 10,
+  },
+});
