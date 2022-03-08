@@ -1,23 +1,28 @@
-import React, {useState, useEffect} from 'react';
-import {Provider, useDispatch, useSelector} from 'react-redux';
+import React, {useEffect, useCallback} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
 import {
   FlatList,
   SafeAreaView,
-  ScrollView,
   StatusBar,
   StyleSheet,
   Text,
-  useColorScheme,
   View,
 } from 'react-native';
 import Header from '../../components/Header';
 import {getLaunches} from '../../modules/launches/actions';
 import {launchesSelector} from '../../modules/launches/selectors';
+import {Launch} from '../../models/launch';
+import {isPendingSelector} from '../../modules/status/selectors';
+import {RootState} from '../../redux/configureStore';
+import {chageeTimeFormat} from '../../utils/changeTimeFormat';
+import {truncateString} from '../../utils/truncateString';
 
 export const Home = () => {
   const dispatch = useDispatch();
   const launches = useSelector(launchesSelector);
-
+  const isLaunchesPeding = useSelector((state: RootState) =>
+    isPendingSelector(state, getLaunches.typePrefix),
+  );
   //dispatch async thunk with Redux toolkit
   //seperate UI with Logic
 
@@ -25,27 +30,21 @@ export const Home = () => {
     dispatch(getLaunches());
   }, []);
 
-  const chageeTimeFormat = (utc_time: string) => {
-    let date = new Date(utc_time);
-    return date.toLocaleDateString();
-  };
+  const handleReload = useCallback(() => {
+    dispatch(getLaunches());
+  }, [dispatch]);
 
-  const shortenCharacter = (string: string) => {
-    return string.substring(0, 8);
-  };
-
-  const renderItem = data => {
+  const renderItem = ({item}: {item: Launch}) => {
     return (
       <>
         <View style={styles.item}>
           <View style={styles.box}>
-            {/* <Text>#</Text> */}
             <Text style={styles.title}>
-              {shortenCharacter(data.item.mission_name)}
+              {truncateString(item.mission_name)}
             </Text>
             <View>
-              <Text>{chageeTimeFormat(data.item.launch_date_utc)}</Text>
-              <Text>{data.item.rocket.rocket_name}</Text>
+              <Text>{chageeTimeFormat(item.launch_date_utc)}</Text>
+              <Text>{item.rocket.rocket_name}</Text>
             </View>
           </View>
         </View>
@@ -60,7 +59,12 @@ export const Home = () => {
         <FlatList
           data={launches}
           renderItem={renderItem}
-          keyExtractor={item => item.flight_number.toString()}
+          contentContainerStyle={StyleSheet.flatten({paddingBottom: 90})}
+          keyExtractor={item =>
+            `${item.flight_number.toString()}-${item.launch_date_utc}`
+          }
+          refreshing={isLaunchesPeding}
+          onRefresh={handleReload}
         />
       </View>
     </SafeAreaView>
