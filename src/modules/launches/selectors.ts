@@ -1,6 +1,5 @@
 import {createSelector} from '@reduxjs/toolkit';
 import {RootState} from '../../redux/configureStore';
-import {Launch} from '../../models/launch';
 
 const launchesState = (state: RootState) => state.launches;
 
@@ -9,7 +8,12 @@ export const launchesSelector = createSelector(
   launches => launches,
 );
 
-// export const sortBy = createSelector(
-//     launchesState,
-//     launches => launches.sort,
-//   );
+export const findByYearSelector = createSelector(
+  launchesState,
+  (_: RootState, year: string) => year,
+  (launches, year) => {
+    const res = launches.find(launch => {
+      return launch.launch_year === year;
+    });
+  },
+);
