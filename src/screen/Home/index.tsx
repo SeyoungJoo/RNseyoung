@@ -1,13 +1,13 @@
-import React, {useEffect, useCallback} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   FlatList,
   SafeAreaView,
   StyleSheet,
-  Button,
   Text,
   View,
   Pressable,
+  Alert,
 } from 'react-native';
 import {Header} from '../../components/Header';
 import {getLaunches} from '../../modules/launches/actions';
@@ -17,23 +17,32 @@ import {isPendingSelector} from '../../modules/status/selectors';
 import {RootState} from '../../redux/configureStore';
 import {chageeTimeFormat} from '../../utils/changeTimeFormat';
 import {truncateString} from '../../utils/truncateString';
+import {styles} from './Home.styles';
 
 export const Home = () => {
   const dispatch = useDispatch();
   const launches = useSelector(launchesSelector);
+  const [sorting, setSorting] = useState('');
+
   const isLaunchesPeding = useSelector((state: RootState) =>
     isPendingSelector(state, getLaunches.typePrefix),
   );
-  //dispatch async thunk with Redux toolkit
-  //seperate UI with Logic
 
   useEffect(() => {
-    dispatch(getLaunches());
+    dispatch(getLaunches({sortBy: 'launch_year', orderBy: '', year: ''}));
   }, []);
 
   const handleReload = useCallback(() => {
-    dispatch(getLaunches());
+    dispatch(getLaunches({}));
   }, [dispatch]);
+
+  const changeSortingText = (text: string) => {
+    if (text === 'desc') {
+      return setSorting('asc');
+    } else {
+      return setSorting('desc');
+    }
+  };
 
   const renderItem = ({item}: {item: Launch}) => {
     return (
@@ -54,19 +63,53 @@ export const Home = () => {
       </>
     );
   };
-
   return (
     <SafeAreaView>
       <Header />
       <View style={styles.buttonContainer}>
-        <Pressable style={styles.button}>
-          <Text style={styles.buttonText}>filter by Year</Text>
-        </Pressable>
         <Pressable
           style={styles.button}
-          // onPress={onPress}
-        >
-          <Text style={styles.buttonText}>Sorting Decending</Text>
+          onPress={() => {
+            return Alert.prompt(
+              'Enter Year',
+              'Enter a valid year',
+              [
+                {
+                  text: 'Cancel',
+                  onPress: () => {},
+                  style: 'cancel',
+                },
+                {
+                  text: 'OK',
+                  onPress: year =>
+                    dispatch(
+                      getLaunches({
+                        sortBy: 'launch_year',
+                        orderBy: sorting,
+                        year,
+                      }),
+                    ),
+                },
+              ],
+              'plain-text',
+            );
+          }}>
+          <Text style={styles.buttonText}>Search by year</Text>
+        </Pressable>
+
+        <Pressable
+          style={styles.button}
+          onPress={() => {
+            changeSortingText(sorting);
+            dispatch(
+              getLaunches({
+                sortBy: 'launch_year',
+                orderBy: sorting,
+                year: '',
+              }),
+            );
+          }}>
+          <Text style={styles.buttonText}>{`Sorting ${sorting}`}</Text>
         </Pressable>
       </View>
       <View>
@@ -84,48 +127,3 @@ export const Home = () => {
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    marginRight: 20,
-    marginBottom: 10,
-  },
-  button: {
-    backgroundColor: '#02055a',
-    alignSelf: 'flex-start',
-    padding: 8,
-    marginLeft: 10,
-  },
-  buttonText: {
-    color: '#ffffff',
-    fontSize: 12,
-  },
-  item: {
-    borderColor: 'black',
-    borderWidth: 1,
-    borderRadius: 8,
-    padding: 10,
-    paddingLeft: 20,
-    paddingRight: 20,
-    marginVertical: 8,
-    marginHorizontal: 16,
-  },
-  box: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 20,
-  },
-  date: {
-    fontSize: 13,
-    color: 'grey',
-    marginBottom: 6,
-  },
-  dateContainer: {
-    alignItems: 'flex-end',
-  },
-});
