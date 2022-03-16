@@ -4,6 +4,7 @@ export interface Launch {
   rocket: {rocket_name: string; rocket_id: string};
   launch_year: string;
   flight_number: number;
+  launch_site?: {site_name_long: string};
 }
 
 // {

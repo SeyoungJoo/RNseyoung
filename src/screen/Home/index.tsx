@@ -19,7 +19,7 @@ import {chageeTimeFormat} from '../../utils/changeTimeFormat';
 import {truncateString} from '../../utils/truncateString';
 import {styles} from './Home.styles';
 
-export const Home = () => {
+export const Home = ({navigation}) => {
   const dispatch = useDispatch();
   const launches = useSelector(launchesSelector);
   const [sorting, setSorting] = useState('');
@@ -44,25 +44,6 @@ export const Home = () => {
     }
   };
 
-  const renderItem = ({item}: {item: Launch}) => {
-    return (
-      <>
-        <View style={styles.item}>
-          <View style={styles.box}>
-            <Text style={styles.title}>
-              {truncateString(item.mission_name)}
-            </Text>
-            <View style={styles.dateContainer}>
-              <Text style={styles.date}>
-                {chageeTimeFormat(item.launch_date_utc)}
-              </Text>
-              <Text>{item.rocket.rocket_name}</Text>
-            </View>
-          </View>
-        </View>
-      </>
-    );
-  };
   return (
     <SafeAreaView>
       <Header />
@@ -115,13 +96,36 @@ export const Home = () => {
       <View>
         <FlatList
           data={launches}
-          renderItem={renderItem}
           contentContainerStyle={StyleSheet.flatten({paddingBottom: 90})}
           keyExtractor={item =>
             `${item.flight_number.toString()}-${item.launch_date_utc}`
           }
           refreshing={isLaunchesPeding}
           onRefresh={handleReload}
+          renderItem={({item}: {item: Launch}) => {
+            return (
+              <>
+                <Pressable
+                  onPress={() =>
+                    navigation.push('SpaceItemDetails', {detail: item})
+                  }>
+                  <View style={styles.item}>
+                    <View style={styles.box}>
+                      <Text style={styles.title}>
+                        {truncateString(item.mission_name)}
+                      </Text>
+                      <View style={styles.dateContainer}>
+                        <Text style={styles.date}>
+                          {chageeTimeFormat(item.launch_date_utc)}
+                        </Text>
+                        <Text>{item.rocket.rocket_name}</Text>
+                      </View>
+                    </View>
+                  </View>
+                </Pressable>
+              </>
+            );
+          }}
         />
       </View>
     </SafeAreaView>
