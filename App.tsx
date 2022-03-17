@@ -8,27 +8,9 @@ import Navigation from './src/components/navigation';
 const App = () => {
   return (
     <Provider store={store}>
-      {/* <NavigationContainer> */}
       <Navigation />
-      {/* <Home /> */}
-      {/* </NavigationContainer> */}
     </Provider>
   );
 };
 
 export default App;
-
-// <NativeBaseProvider
-// config={{
-//   dependencies: {
-//     'linear-gradient': LinearGradient,
-//   },
-// }}
-// theme={extendTheme({
-//   config: {
-//     useSystemColorMode: false,
-//     initialColorMode: 'dark',
-//   },
-// })}>
-// <TabNavigator />
-// </NativeBaseProvider>

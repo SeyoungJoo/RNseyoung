@@ -4,19 +4,25 @@ import {NavigationContainer} from '@react-navigation/native';
 import {Home} from '../screen/Home';
 import {SpaceItemDetails} from './SpaceItemDetails';
 
-type StackParamList = {
-  Home: string;
-  SpaceItemDetails: {id: string};
+export type RootStackParams = {
+  Home: undefined;
+  SpaceItemDetails: {
+    item: {
+      mission_name: string;
+      launch_date_utc: string;
+      rocket: {rocket_name: string};
+      launch_site: {site_name_long: string};
+    };
+  };
 };
-const ContactsStack = createStackNavigator();
+
+const RootStack = createStackNavigator<RootStackParams>();
+
 const ContactsStackScreen = () => (
-  <ContactsStack.Navigator>
-    <ContactsStack.Screen name="Home" component={Home} />
-    <ContactsStack.Screen
-      name="SpaceItemDetails"
-      component={SpaceItemDetails}
-    />
-  </ContactsStack.Navigator>
+  <RootStack.Navigator>
+    <RootStack.Screen name="Home" component={Home} />
+    <RootStack.Screen name="SpaceItemDetails" component={SpaceItemDetails} />
+  </RootStack.Navigator>
 );
 
 export default () => (

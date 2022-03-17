@@ -18,11 +18,16 @@ import {RootState} from '../../redux/configureStore';
 import {chageeTimeFormat} from '../../utils/changeTimeFormat';
 import {truncateString} from '../../utils/truncateString';
 import {styles} from './Home.styles';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {RootStackParams} from '../../components/navigation';
 
-export const Home = ({navigation}) => {
+export const Home = () => {
   const dispatch = useDispatch();
   const launches = useSelector(launchesSelector);
   const [sorting, setSorting] = useState('');
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParams, 'Home'>>();
 
   const isLaunchesPeding = useSelector((state: RootState) =>
     isPendingSelector(state, getLaunches.typePrefix),
@@ -107,7 +112,7 @@ export const Home = ({navigation}) => {
               <>
                 <Pressable
                   onPress={() =>
-                    navigation.push('SpaceItemDetails', {detail: item})
+                    navigation.navigate('SpaceItemDetails', {item: item})
                   }>
                   <View style={styles.item}>
                     <View style={styles.box}>

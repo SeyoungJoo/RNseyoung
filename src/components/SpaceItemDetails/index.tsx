@@ -1,17 +1,26 @@
 import React from 'react';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import {chageeTimeFormat} from '../../utils/changeTimeFormat';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {useNavigation} from '@react-navigation/native';
+import {RootStackParams} from '../navigation';
+import {RouteProp} from '@react-navigation/native';
 
-export const SpaceItemDetails = ({route, navigation}) => {
-  const spaceDetail = route.params.detail;
+type DetailScreenRouteProp = RouteProp<RootStackParams, 'SpaceItemDetails'>;
+
+type Props = {
+  route: DetailScreenRouteProp;
+};
+
+export const SpaceItemDetails = ({route}: Props) => {
+  const spaceDetail = route.params.item;
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParams>>();
 
   return (
     <View style={styles.container}>
-      <Pressable
-        onPress={() => navigation.goBack()}
-        style={styles.gobackButton}>
-        <Text style={styles.buttonText}>Go Back</Text>
+      <Pressable onPress={() => navigation.goBack()}>
+        <Text>Go Back</Text>
       </Pressable>
       <Text style={styles.header}>
         Mission Name: {spaceDetail.mission_name}
