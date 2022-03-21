@@ -18,10 +18,10 @@ export const SpaceItemDetails = ({route}: Props) => {
     useNavigation<NativeStackNavigationProp<RootStackParams>>();
 
   return (
-    <View style={styles.container}>
-      <Pressable onPress={() => navigation.goBack()}>
+    <View style={styles.container} testID="detailPage">
+      {/* <Pressable onPress={() => navigation.goBack()}>
         <Text>Go Back</Text>
-      </Pressable>
+      </Pressable> */}
       <Text style={styles.header}>
         Mission Name: {spaceDetail.mission_name}
       </Text>

@@ -100,6 +100,7 @@ export const Home = () => {
       </View>
       <View>
         <FlatList
+          testID="flatlist"
           data={launches}
           contentContainerStyle={StyleSheet.flatten({paddingBottom: 90})}
           keyExtractor={item =>
@@ -111,6 +112,9 @@ export const Home = () => {
             return (
               <>
                 <Pressable
+                  testID={`listItem-${item.flight_number.toString()}-${
+                    item.launch_date_utc
+                  }`}
                   onPress={() =>
                     navigation.navigate('SpaceItemDetails', {item: item})
                   }>
