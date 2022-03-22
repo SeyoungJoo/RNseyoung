@@ -3,6 +3,10 @@ describe('Example', () => {
     await device.launchApp();
   });
 
+  it('should have header', async () => {
+    await expect(element(by.id('header'))).toBeVisible();
+  });
+
   it('should show flatlist', async () => {
     await expect(element(by.id('flatlist'))).toBeVisible();
   });
@@ -12,12 +16,8 @@ describe('Example', () => {
     await expect(element(by.id('detailPage'))).toBeVisible();
   });
 
-  // it('should have welcome screen', async () => {
-  //   await expect(element(by.id('welcome'))).toBeVisible();
-  // });
-
-  // it('should show hello screen after tap', async () => {
-  //   await element(by.id('hello_button')).tap();
+  // it('should show alert popup after tap', async () => {
+  //   await element(by.id('yearFilter')).tap();
   //   await expect(element(by.text('Hello!!!'))).toBeVisible();
   // });
 });

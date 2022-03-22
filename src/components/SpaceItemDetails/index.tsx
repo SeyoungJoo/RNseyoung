@@ -8,11 +8,11 @@ import {RouteProp} from '@react-navigation/native';
 
 type DetailScreenRouteProp = RouteProp<RootStackParams, 'SpaceItemDetails'>;
 
-type Props = {
+type SpaceItemDetailsProps = {
   route: DetailScreenRouteProp;
 };
 
-export const SpaceItemDetails = ({route}: Props) => {
+export const SpaceItemDetails = ({route}: SpaceItemDetailsProps) => {
   const spaceDetail = route.params.item;
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParams>>();
