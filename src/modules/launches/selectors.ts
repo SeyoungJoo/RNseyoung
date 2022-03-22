@@ -8,12 +8,12 @@ export const launchesSelector = createSelector(
   launches => launches,
 );
 
-export const findByYearSelector = createSelector(
-  launchesState,
-  (_: RootState, year: string) => year,
-  (launches, year) => {
-    const res = launches.find(launch => {
-      return launch.launch_year === year;
-    });
-  },
-);
+// export const findByYearSelector = createSelector(
+//   launchesState,
+//   (_: RootState, year: string) => year,
+//   (launches, year) => {
+//     const res = launches.find(launch => {
+//       return launch.launch_year === year;
+//     });
+//   },
+// );

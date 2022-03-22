@@ -4,7 +4,7 @@ import {View, Text, StyleSheet} from 'react-native';
 
 export const Header = () => {
   return (
-    <View style={styles.header}>
+    <View testID="header" style={styles.header}>
       <Text style={styles.headerText}>🚀spaceX project🚀</Text>
     </View>
   );

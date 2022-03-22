@@ -18,11 +18,16 @@ import {RootState} from '../../redux/configureStore';
 import {chageeTimeFormat} from '../../utils/changeTimeFormat';
 import {truncateString} from '../../utils/truncateString';
 import {styles} from './Home.styles';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {RootStackParams} from '../../components/navigation';
 
 export const Home = () => {
   const dispatch = useDispatch();
   const launches = useSelector(launchesSelector);
   const [sorting, setSorting] = useState('');
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParams, 'Home'>>();
 
   const isLaunchesPeding = useSelector((state: RootState) =>
     isPendingSelector(state, getLaunches.typePrefix),
@@ -44,30 +49,12 @@ export const Home = () => {
     }
   };
 
-  const renderItem = ({item}: {item: Launch}) => {
-    return (
-      <>
-        <View style={styles.item}>
-          <View style={styles.box}>
-            <Text style={styles.title}>
-              {truncateString(item.mission_name)}
-            </Text>
-            <View style={styles.dateContainer}>
-              <Text style={styles.date}>
-                {chageeTimeFormat(item.launch_date_utc)}
-              </Text>
-              <Text>{item.rocket.rocket_name}</Text>
-            </View>
-          </View>
-        </View>
-      </>
-    );
-  };
   return (
     <SafeAreaView>
       <Header />
       <View style={styles.buttonContainer}>
         <Pressable
+          testID="yearFilter"
           style={styles.button}
           onPress={() => {
             return Alert.prompt(
@@ -114,14 +101,37 @@ export const Home = () => {
       </View>
       <View>
         <FlatList
+          testID="flatlist"
           data={launches}
-          renderItem={renderItem}
           contentContainerStyle={StyleSheet.flatten({paddingBottom: 90})}
           keyExtractor={item =>
             `${item.flight_number.toString()}-${item.launch_date_utc}`
           }
           refreshing={isLaunchesPeding}
           onRefresh={handleReload}
+          renderItem={({item}: {item: Launch}) => (
+            <Pressable
+              testID={`listItem-${item.flight_number.toString()}-${
+                item.launch_date_utc
+              }`}
+              onPress={() =>
+                navigation.navigate('SpaceItemDetails', {item: item})
+              }>
+              <View style={styles.item}>
+                <View style={styles.box}>
+                  <Text style={styles.title}>
+                    {truncateString(item.mission_name)}
+                  </Text>
+                  <View style={styles.dateContainer}>
+                    <Text style={styles.date}>
+                      {chageeTimeFormat(item.launch_date_utc)}
+                    </Text>
+                    <Text>{item.rocket.rocket_name}</Text>
+                  </View>
+                </View>
+              </View>
+            </Pressable>
+          )}
         />
       </View>
     </SafeAreaView>
